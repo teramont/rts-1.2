@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from time import time
 
 HARMONICS_COUNT = 6
 MAX_FREQUENCY = 1700
@@ -41,22 +42,32 @@ def correlation(sig1, sig2, interval):
 def autocorrelation(sig, interval):
 	return correlation(sig, sig, interval)
 
-sig1 = rand_sig(HARMONICS_COUNT, MAX_FREQUENCY, DISCRETE_TIMES_COUNT)
-sig2 = rand_sig(HARMONICS_COUNT, MAX_FREQUENCY, DISCRETE_TIMES_COUNT)
+#Additional task
 
-autocorrelation_values = np.zeros(MAX_INTERVAL)
-crosscorrelation_values = np.zeros(MAX_INTERVAL)
+autocorrelation_values = np.zeros(10)
+crosscorrelation_values = np.zeros(10)
+autocorrelation_durations = np.zeros(10)
+crosscorrelation_durations = np.zeros(10)
 
-for interval in range(MAX_INTERVAL):
-	autocorrelation_values[interval] = autocorrelation(sig1, interval)
-	crosscorrelation_values[interval] = correlation(sig1, sig2, interval)
+for i in range(1, 10):
+	N = i * 256
+	sig1 = rand_sig(HARMONICS_COUNT, MAX_FREQUENCY, N)
+	sig2 = rand_sig(HARMONICS_COUNT, MAX_FREQUENCY, N)
+	before = time()
+	autocorrelation_values[i] = autocorrelation(sig1, 5)
+	after = time()
+	autocorrelation_durations[i] = after - before
+	before = time()
+	crosscorrelation_values[i] = correlation(sig1, sig2, 5)
+	after = time()
+	crosscorrelation_durations[i] = after - before
 
-plt.plot(range(MAX_INTERVAL), autocorrelation_values)
-plt.xlabel("Interval")
-plt.ylabel("Autocorrelation value")
+plt.plot(range(10), autocorrelation_durations)
+plt.xlabel("N")
+plt.ylabel("Duration")
 plt.show()
 
-plt.plot(range(MAX_INTERVAL), crosscorrelation_values)
-plt.xlabel("Interval")
-plt.ylabel("Crosscorrelation value")
+plt.plot(range(10), crosscorrelation_durations)
+plt.xlabel("N")
+plt.ylabel("Duration")
 plt.show()
